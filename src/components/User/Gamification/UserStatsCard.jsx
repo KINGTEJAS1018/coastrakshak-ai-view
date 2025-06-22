@@ -1,3 +1,4 @@
+
 import { useGamification } from '../../context/UserGamificationContext';
 
 const UserStatsCard = () => {

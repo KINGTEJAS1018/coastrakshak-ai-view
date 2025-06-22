@@ -1,359 +1,268 @@
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Shield, 
-  Users, 
-  Activity, 
-  Server, 
-  Database, 
-  Settings,
-  LogOut,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Clock,
-  BarChart3,
-  UserCheck,
-  Zap
-} from "lucide-react";
-import { Link } from "react-router-dom";
+import { MapPin, Users, TrendingUp, Star, Heart, Eye, Calendar, Clock } from "lucide-react";
 
 const AdminDashboard = () => {
-  const [systemAlerts] = useState([
-    { id: 1, type: "critical", message: "Database backup failed", time: "5 min ago", resolved: false },
-    { id: 2, type: "warning", message: "High CPU usage on Server 2", time: "12 min ago", resolved: false },
-    { id: 3, type: "info", message: "Scheduled maintenance completed", time: "1 hour ago", resolved: true },
-  ]);
+  const [selectedBeach, setSelectedBeach] = useState(null);
 
-  const [users] = useState([
-    { id: 1, name: "Dr. Sarah Chen", email: "s.chen@marine.org", role: "Researcher", status: "active", lastLogin: "2 hours ago" },
-    { id: 2, name: "Prof. John Smith", email: "j.smith@coastal.edu", role: "Senior Researcher", status: "active", lastLogin: "1 day ago" },
-    { id: 3, name: "Maria Rodriguez", email: "m.rodriguez@gov.marine", role: "Analyst", status: "inactive", lastLogin: "3 days ago" },
-    { id: 4, name: "Dr. Michael Kim", email: "m.kim@oceantech.com", role: "Researcher", status: "active", lastLogin: "30 min ago" },
-  ]);
-
-  const getAlertIcon = (type: string) => {
-    switch (type) {
-      case "critical": return <XCircle className="h-4 w-4 text-red-500" />;
-      case "warning": return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
-      case "info": return <CheckCircle className="h-4 w-4 text-blue-500" />;
-      default: return <Clock className="h-4 w-4 text-gray-500" />;
+  // Mumbai beaches data with volunteer interest
+  const beachesData = [
+    {
+      id: 1,
+      name: "Juhu Beach",
+      location: "Juhu, Mumbai",
+      volunteers: 156,
+      rating: 4.2,
+      status: "High Priority",
+      lastCleaned: "2 days ago",
+      wasteLevel: 78,
+      image: "https://images.unsplash.com/photo-1566073771259-6a8506862ae3?w=300&h=200&fit=crop",
+      trending: true
+    },
+    {
+      id: 2,
+      name: "Marine Drive Beach",
+      location: "Marine Drive, Mumbai",
+      volunteers: 203,
+      rating: 4.5,
+      status: "Clean",
+      lastCleaned: "1 day ago",
+      wasteLevel: 32,
+      image: "https://images.unsplash.com/photo-1587473454983-0d1bb908d067?w=300&h=200&fit=crop",
+      trending: true
+    },
+    {
+      id: 3,
+      name: "Versova Beach",
+      location: "Versova, Mumbai",
+      volunteers: 189,
+      rating: 4.0,
+      status: "Needs Attention",
+      lastCleaned: "5 days ago",
+      wasteLevel: 65,
+      image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=300&h=200&fit=crop"
+    },
+    {
+      id: 4,
+      name: "Chowpatty Beach",
+      location: "Girgaon, Mumbai",
+      volunteers: 134,
+      rating: 3.8,
+      status: "Moderate",
+      lastCleaned: "3 days ago",
+      wasteLevel: 55,
+      image: "https://images.unsplash.com/photo-1588963931436-a62b68abf138?w=300&h=200&fit=crop"
+    },
+    {
+      id: 5,
+      name: "Bandra Bandstand",
+      location: "Bandra, Mumbai",
+      volunteers: 167,
+      rating: 4.3,
+      status: "Good",
+      lastCleaned: "1 day ago",
+      wasteLevel: 28,
+      image: "https://images.unsplash.com/photo-1539650116574-75c0c6d73aeb?w=300&h=200&fit=crop"
+    },
+    {
+      id: 6,
+      name: "Aksa Beach",
+      location: "Malad, Mumbai",
+      volunteers: 98,
+      rating: 3.9,
+      status: "Remote",
+      lastCleaned: "1 week ago",
+      wasteLevel: 45,
+      image: "https://images.unsplash.com/photo-1544551763-77ef2d0cfc6c?w=300&h=200&fit=crop"
     }
-  };
+  ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active": return "bg-green-100 text-green-800";
-      case "inactive": return "bg-gray-100 text-gray-800";
-      case "suspended": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
+  const totalVolunteers = beachesData.reduce((sum, beach) => sum + beach.volunteers, 0);
+  const avgRating = (beachesData.reduce((sum, beach) => sum + beach.rating, 0) / beachesData.length).toFixed(1);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-slate-900 to-slate-800 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <Shield className="h-8 w-8 text-red-400" />
-              <div>
-                <h1 className="text-2xl font-bold text-white">Coastrakshak.AI</h1>
-                <p className="text-sm text-gray-300">Admin Control Panel</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Badge variant="destructive" className="bg-red-600">
-                ADMIN
-              </Badge>
-              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white">
-                <Settings className="h-4 w-4" />
-              </Button>
-              <Link to="/">
-                <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white">
-                  <LogOut className="h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 p-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">System Administration</h2>
-          <p className="text-gray-600">Monitor system health, manage users, and oversee operations</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Beach Management Dashboard</h1>
+          <p className="text-gray-600">Monitor and manage coastal cleanup operations across Mumbai</p>
         </div>
 
-        {/* System Overview Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="border-l-4 border-l-green-500">
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">System Uptime</p>
-                  <p className="text-3xl font-bold text-green-600">99.9%</p>
+                  <p className="text-blue-100">Total Beaches</p>
+                  <p className="text-3xl font-bold">{beachesData.length}</p>
                 </div>
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <Activity className="h-6 w-6 text-green-600" />
-                </div>
+                <MapPin className="h-8 w-8 text-blue-200" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-blue-500">
+          <Card className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Active Users</p>
-                  <p className="text-3xl font-bold text-blue-600">347</p>
+                  <p className="text-green-100">Active Volunteers</p>
+                  <p className="text-3xl font-bold">{totalVolunteers}</p>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Users className="h-6 w-6 text-blue-600" />
-                </div>
+                <Users className="h-8 w-8 text-green-200" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-purple-500">
+          <Card className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">API Requests</p>
-                  <p className="text-3xl font-bold text-purple-600">2.3M</p>
+                  <p className="text-purple-100">Avg Rating</p>
+                  <p className="text-3xl font-bold">{avgRating}</p>
                 </div>
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <BarChart3 className="h-6 w-6 text-purple-600" />
-                </div>
+                <Star className="h-8 w-8 text-purple-200" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-orange-500">
+          <Card className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Storage Used</p>
-                  <p className="text-3xl font-bold text-orange-600">68%</p>
+                  <p className="text-orange-100">High Priority</p>
+                  <p className="text-3xl font-bold">3</p>
                 </div>
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <Database className="h-6 w-6 text-orange-600" />
-                </div>
+                <TrendingUp className="h-8 w-8 text-orange-200" />
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            <Tabs defaultValue="overview" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="users">Users</TabsTrigger>
-                <TabsTrigger value="system">System</TabsTrigger>
-                <TabsTrigger value="logs">Logs</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="overview" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Server className="h-5 w-5" />
-                        Server Health
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>CPU Usage</span>
-                          <span>45%</span>
+        {/* Trending Beaches Section (Zomato-style) */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-6 w-6 text-orange-500" />
+              Highly Volunteered Beaches
+            </CardTitle>
+            <CardDescription>
+              Popular beaches with high volunteer engagement
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {beachesData
+                .filter(beach => beach.trending)
+                .map((beach) => (
+                  <div key={beach.id} className="flex items-center space-x-4 p-4 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg border border-orange-200">
+                    <img 
+                      src={beach.image} 
+                      alt={beach.name}
+                      className="w-16 h-16 rounded-lg object-cover"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900">{beach.name}</h3>
+                      <p className="text-sm text-gray-600">{beach.location}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <div className="flex items-center gap-1">
+                          <Heart className="h-4 w-4 text-red-500" />
+                          <span className="text-sm font-medium">{beach.volunteers}</span>
                         </div>
-                        <Progress value={45} className="h-2" />
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Memory Usage</span>
-                          <span>62%</span>
+                        <div className="flex items-center gap-1">
+                          <Star className="h-4 w-4 text-yellow-500" />
+                          <span className="text-sm">{beach.rating}</span>
                         </div>
-                        <Progress value={62} className="h-2" />
+                        <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">
+                          Trending
+                        </Badge>
                       </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Disk Usage</span>
-                          <span>78%</span>
-                        </div>
-                        <Progress value={78} className="h-2" />
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Zap className="h-5 w-5" />
-                        Performance Metrics
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Avg Response Time</span>
-                        <Badge className="bg-green-100 text-green-800">120ms</Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Error Rate</span>
-                        <Badge className="bg-green-100 text-green-800">0.02%</Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Throughput</span>
-                        <Badge className="bg-blue-100 text-blue-800">1.2K/min</Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Active Connections</span>
-                        <Badge className="bg-purple-100 text-purple-800">847</Badge>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="users" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <UserCheck className="h-5 w-5" />
-                      User Management
-                    </CardTitle>
-                    <CardDescription>
-                      Manage user accounts and permissions
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {users.map((user) => (
-                        <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full flex items-center justify-center text-white font-medium">
-                              {user.name.split(' ').map(n => n[0]).join('')}
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-gray-900">{user.name}</h4>
-                              <p className="text-sm text-gray-500">{user.email}</p>
-                              <p className="text-xs text-gray-400">Last login: {user.lastLogin}</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-3">
-                            <Badge variant="outline">{user.role}</Badge>
-                            <Badge className={getStatusColor(user.status)}>
-                              {user.status}
-                            </Badge>
-                            <Button variant="ghost" size="sm">
-                              <Settings className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
                     </div>
+                  </div>
+                ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* All Beaches Grid */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MapPin className="h-6 w-6 text-blue-500" />
+              All Mumbai Beaches
+            </CardTitle>
+            <CardDescription>
+              Comprehensive overview of all monitored beaches
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {beachesData.map((beach) => (
+                <Card key={beach.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+                  <div className="relative">
+                    <img 
+                      src={beach.image} 
+                      alt={beach.name}
+                      className="w-full h-48 object-cover rounded-t-lg"
+                    />
+                    <Badge 
+                      className={`absolute top-2 right-2 ${
+                        beach.status === 'High Priority' ? 'bg-red-500' :
+                        beach.status === 'Clean' ? 'bg-green-500' :
+                        beach.status === 'Needs Attention' ? 'bg-orange-500' :
+                        'bg-blue-500'
+                      }`}
+                    >
+                      {beach.status}
+                    </Badge>
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="font-bold text-lg mb-1">{beach.name}</h3>
+                    <p className="text-gray-600 text-sm mb-3">{beach.location}</p>
+                    
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1">
+                          <Users className="h-4 w-4 text-blue-500" />
+                          <span className="text-sm font-medium">{beach.volunteers} volunteers</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Star className="h-4 w-4 text-yellow-500" />
+                          <span className="text-sm">{beach.rating}</span>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-sm text-gray-600">Waste Level</span>
+                          <span className="text-sm font-medium">{beach.wasteLevel}%</span>
+                        </div>
+                        <Progress 
+                          value={beach.wasteLevel} 
+                          className={`h-2 ${beach.wasteLevel > 70 ? 'bg-red-100' : beach.wasteLevel > 40 ? 'bg-yellow-100' : 'bg-green-100'}`}
+                        />
+                      </div>
+                      
+                      <div className="flex items-center gap-1 text-sm text-gray-600">
+                        <Clock className="h-4 w-4" />
+                        <span>Last cleaned: {beach.lastCleaned}</span>
+                      </div>
+                    </div>
+                    
+                    <Button className="w-full mt-4" variant="outline">
+                      View Details
+                    </Button>
                   </CardContent>
                 </Card>
-              </TabsContent>
-
-              <TabsContent value="system">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>System Configuration</CardTitle>
-                    <CardDescription>System settings and configuration management</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-12">
-                      <Settings className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">System Settings</h3>
-                      <p className="text-gray-500">Advanced system configuration panel</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="logs">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>System Logs</CardTitle>
-                    <CardDescription>Monitor system activity and debug issues</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-12">
-                      <Activity className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">Activity Logs</h3>
-                      <p className="text-gray-500">Real-time system logs and monitoring</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* System Alerts */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-red-500" />
-                  System Alerts
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {systemAlerts.map((alert) => (
-                    <div key={alert.id} className="flex items-start space-x-3 p-3 border rounded-lg">
-                      {getAlertIcon(alert.type)}
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-900 text-sm">{alert.message}</p>
-                        <p className="text-xs text-gray-500">{alert.time}</p>
-                        {alert.resolved && (
-                          <Badge className="bg-green-100 text-green-800 text-xs mt-1">Resolved</Badge>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button className="w-full justify-start" variant="outline">
-                  <Users className="h-4 w-4 mr-2" />
-                  Add New User
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Database className="h-4 w-4 mr-2" />
-                  Backup Database
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Settings className="h-4 w-4 mr-2" />
-                  System Settings
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Activity className="h-4 w-4 mr-2" />
-                  Generate Report
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

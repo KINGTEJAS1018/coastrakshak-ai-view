@@ -1,299 +1,285 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Waves, 
-  MapPin, 
-  Activity, 
-  AlertTriangle, 
-  TrendingUp, 
-  Shield, 
-  Camera,
-  Bell,
-  Settings,
-  LogOut,
-  Eye
-} from "lucide-react";
-import { Link } from "react-router-dom";
+import { Camera, Award, Star, Flame, Target, Users, Trophy, Medal, Crown, Zap, Calendar } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { UserGamificationProvider, useGamification } from "@/components/User/context/UserGamificationContext";
 
-const UserDashboard = () => {
-  const [activeAlerts] = useState([
-    { id: 1, type: "warning", location: "Sector A-1", message: "Unusual wave patterns detected", time: "2 min ago" },
-    { id: 2, type: "info", location: "Sector B-3", message: "Regular monitoring update", time: "15 min ago" },
-    { id: 3, type: "critical", location: "Sector C-2", message: "Erosion rate above threshold", time: "1 hour ago" }
-  ]);
+const WasteCaptureButton = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isCapturing, setIsCapturing] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const { updateXP } = useGamification();
 
-  const monitoringSites = [
-    { name: "Marina Bay", status: "active", threat: "low", coverage: 98 },
-    { name: "Coral Beach", status: "active", threat: "medium", coverage: 94 },
-    { name: "Rocky Point", status: "maintenance", threat: "high", coverage: 85 },
-    { name: "Sunset Shore", status: "active", threat: "low", coverage: 100 }
-  ];
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active": return "bg-green-500";
-      case "maintenance": return "bg-yellow-500";
-      case "offline": return "bg-red-500";
-      default: return "bg-gray-500";
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' } 
+      });
+      setStream(mediaStream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+        videoRef.current.play();
+      }
+      setIsCapturing(true);
+    } catch (error) {
+      toast({
+        title: "Camera Permission Required",
+        description: "Please allow camera access to capture waste images.",
+        variant: "destructive",
+      });
     }
   };
 
-  const getThreatColor = (threat: string) => {
-    switch (threat) {
-      case "low": return "text-green-600 bg-green-50";
-      case "medium": return "text-yellow-600 bg-yellow-50";
-      case "high": return "text-red-600 bg-red-50";
-      default: return "text-gray-600 bg-gray-50";
+  const captureImage = () => {
+    if (videoRef.current && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const video = videoRef.current;
+      const context = canvas.getContext('2d');
+      
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context?.drawImage(video, 0, 0);
+      
+      // Simulate waste classification
+      const wasteTypes = ['Wet Waste', 'Dry Waste'];
+      const detectedWaste = wasteTypes[Math.floor(Math.random() * wasteTypes.length)];
+      
+      updateXP(25);
+      
+      toast({
+        title: "Waste Detected!",
+        description: `Classified as: ${detectedWaste}. +25 XP earned!`,
+      });
+      
+      stopCamera();
     }
+  };
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    setIsCapturing(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <Waves className="h-8 w-8 text-blue-600" />
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Coastrakshak.AI</h1>
-                <p className="text-sm text-gray-500">User Dashboard</p>
-              </div>
+    <Card className="border-2 border-green-200 bg-green-50">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Camera className="h-6 w-6 text-green-600" />
+          Waste Capture Mission
+        </CardTitle>
+        <CardDescription>
+          Capture and classify waste to earn XP and help the environment!
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {!isCapturing ? (
+          <Button 
+            onClick={startCamera}
+            className="w-full bg-green-600 hover:bg-green-700"
+            size="lg"
+          >
+            <Camera className="mr-2 h-5 w-5" />
+            Start Waste Detection
+          </Button>
+        ) : (
+          <div className="space-y-4">
+            <div className="relative rounded-lg overflow-hidden">
+              <video
+                ref={videoRef}
+                className="w-full h-64 object-cover"
+                autoPlay
+                playsInline
+              />
+              <canvas ref={canvasRef} className="hidden" />
             </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
-                <Bell className="h-4 w-4" />
+            <div className="flex gap-2">
+              <Button onClick={captureImage} className="flex-1 bg-green-600 hover:bg-green-700">
+                Capture & Classify
               </Button>
-              <Button variant="ghost" size="sm">
-                <Settings className="h-4 w-4" />
+              <Button onClick={stopCamera} variant="outline" className="flex-1">
+                Cancel
               </Button>
-              <Link to="/">
-                <Button variant="ghost" size="sm">
-                  <LogOut className="h-4 w-4" />
-                </Button>
-              </Link>
             </div>
           </div>
-        </div>
-      </header>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
+const UserStats = () => {
+  const { user } = useGamification();
+  
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <Card className="bg-gradient-to-r from-blue-500 to-teal-500 text-white">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-blue-100">Level</p>
+              <p className="text-2xl font-bold">{user.level}</p>
+            </div>
+            <Crown className="h-8 w-8 text-blue-200" />
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-orange-100">Streak</p>
+              <p className="text-2xl font-bold">{user.streak} days</p>
+            </div>
+            <Flame className="h-8 w-8 text-orange-200" />
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-purple-100">XP</p>
+              <p className="text-2xl font-bold">{user.xp}</p>
+            </div>
+            <Zap className="h-8 w-8 text-purple-200" />
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-green-100">Waste Collected</p>
+              <p className="text-2xl font-bold">{user.wasteCollected}kg</p>
+            </div>
+            <Target className="h-8 w-8 text-green-200" />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+const BadgesSection = () => {
+  const { user } = useGamification();
+  
+  const allBadges = [
+    { id: 1, name: 'Starter', icon: Star, earned: true, description: 'Complete your first mission' },
+    { id: 2, name: 'Eco Warrior', icon: Award, earned: false, description: 'Collect 10kg of waste' },
+    { id: 3, name: 'Streak Master', icon: Flame, earned: false, description: 'Maintain 7-day streak' },
+    { id: 4, name: 'Community Hero', icon: Users, earned: false, description: 'Help 5 other users' },
+  ];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Trophy className="h-6 w-6 text-yellow-600" />
+          Badges Collection
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {allBadges.map((badge) => (
+            <div key={badge.id} className={`p-4 rounded-lg text-center ${badge.earned ? 'bg-yellow-50 border-2 border-yellow-200' : 'bg-gray-50 border-2 border-gray-200'}`}>
+              <badge.icon className={`h-8 w-8 mx-auto mb-2 ${badge.earned ? 'text-yellow-600' : 'text-gray-400'}`} />
+              <p className={`font-semibold ${badge.earned ? 'text-yellow-800' : 'text-gray-500'}`}>{badge.name}</p>
+              <p className="text-xs text-gray-500 mt-1">{badge.description}</p>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+const MissionsSection = () => {
+  const missions = [
+    { id: 1, title: 'Daily Waste Hunt', description: 'Capture and classify 5 waste items', reward: 50, completed: false },
+    { id: 2, title: 'Beach Cleanup', description: 'Join a community beach cleanup event', reward: 100, completed: false },
+    { id: 3, title: 'Recycling Master', description: 'Correctly classify 20 items', reward: 75, completed: false },
+  ];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Target className="h-6 w-6 text-blue-600" />
+          Daily Missions
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {missions.map((mission) => (
+          <div key={mission.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div>
+              <h4 className="font-semibold">{mission.title}</h4>
+              <p className="text-sm text-gray-600">{mission.description}</p>
+              <Badge variant="secondary" className="mt-1">+{mission.reward} XP</Badge>
+            </div>
+            <Button variant={mission.completed ? "secondary" : "default"} size="sm">
+              {mission.completed ? "Completed" : "Start"}
+            </Button>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+};
+
+const UserDashboardContent = () => {
+  const { user } = useGamification();
+  const nextLevelXP = (user.level + 1) * 100;
+  const currentLevelProgress = (user.xp % 100);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 p-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, Researcher!</h2>
-          <p className="text-gray-600">Monitor and analyze coastal conditions in real-time</p>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Active Sites</p>
-                  <p className="text-3xl font-bold text-gray-900">12</p>
-                </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <MapPin className="h-6 w-6 text-blue-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Active Alerts</p>
-                  <p className="text-3xl font-bold text-gray-900">3</p>
-                </div>
-                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                  <AlertTriangle className="h-6 w-6 text-red-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Avg Coverage</p>
-                  <p className="text-3xl font-bold text-gray-900">94%</p>
-                </div>
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <Activity className="h-6 w-6 text-green-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">AI Accuracy</p>
-                  <p className="text-3xl font-bold text-gray-900">98.7%</p>
-                </div>
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-purple-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            <Tabs defaultValue="monitoring" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="monitoring">Live Monitoring</TabsTrigger>
-                <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                <TabsTrigger value="reports">Reports</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="monitoring" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Activity className="h-5 w-5" />
-                      Monitoring Sites
-                    </CardTitle>
-                    <CardDescription>
-                      Real-time status of all coastal monitoring locations
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {monitoringSites.map((site, index) => (
-                        <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                          <div className="flex items-center space-x-4">
-                            <div className={`w-3 h-3 rounded-full ${getStatusColor(site.status)}`}></div>
-                            <div>
-                              <h4 className="font-medium text-gray-900">{site.name}</h4>
-                              <p className="text-sm text-gray-500 capitalize">{site.status}</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-4">
-                            <Badge className={getThreatColor(site.threat)}>
-                              {site.threat} threat
-                            </Badge>
-                            <div className="text-right">
-                              <p className="text-sm font-medium">{site.coverage}%</p>
-                              <Progress value={site.coverage} className="w-20" />
-                            </div>
-                            <Button variant="ghost" size="sm">
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="analytics">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Coastal Analytics</CardTitle>
-                    <CardDescription>AI-powered insights and trends</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-12">
-                      <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">Advanced Analytics</h3>
-                      <p className="text-gray-500">Detailed coastal analysis and predictive modeling coming soon</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="reports">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Generated Reports</CardTitle>
-                    <CardDescription>Export and share monitoring reports</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-12">
-                      <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">Report Generation</h3>
-                      <p className="text-gray-500">Automated report generation and export functionality</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Active Alerts */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5" />
-                  Active Alerts
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {activeAlerts.map((alert) => (
-                    <div key={alert.id} className="border-l-4 border-red-500 pl-4 py-2">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <p className="font-medium text-gray-900">{alert.location}</p>
-                          <p className="text-sm text-gray-600">{alert.message}</p>
-                          <p className="text-xs text-gray-500">{alert.time}</p>
-                        </div>
-                        <Badge variant="destructive" className="text-xs">{alert.type}</Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* System Status */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
-                  System Status
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">AI Processing</span>
-                    <Badge className="bg-green-100 text-green-800">Online</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Data Collection</span>
-                    <Badge className="bg-green-100 text-green-800">Active</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Alert System</span>
-                    <Badge className="bg-green-100 text-green-800">Operational</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Satellite Link</span>
-                    <Badge className="bg-yellow-100 text-yellow-800">Maintenance</Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Welcome back, {user.name}!</h1>
+              <p className="text-gray-600">Continue your eco-journey and make a difference</p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-gray-500">Level {user.level} Progress</p>
+              <Progress value={currentLevelProgress} className="w-32 h-2 mt-1" />
+              <p className="text-xs text-gray-400 mt-1">{user.xp % 100}/100 XP</p>
+            </div>
           </div>
         </div>
+
+        {/* Stats Cards */}
+        <UserStats />
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <WasteCaptureButton />
+          <MissionsSection />
+        </div>
+
+        <BadgesSection />
       </div>
     </div>
+  );
+};
+
+const UserDashboard = () => {
+  return (
+    <UserGamificationProvider>
+      <UserDashboardContent />
+    </UserGamificationProvider>
   );
 };
 
