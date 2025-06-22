@@ -1,10 +1,10 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Waves, Shield, Brain, Users, MapPin, Activity, ChevronRight, Play } from "lucide-react";
 import { Link } from "react-router-dom";
+import ChatbotWidget from "@/components/Chatbot/ChatbotWidget";
 
 const Index = () => {
   const [activeDemo, setActiveDemo] = useState(0);
@@ -181,6 +181,9 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      {/* Chatbot Widget */}
+      <ChatbotWidget />
     </div>
   );
 };
