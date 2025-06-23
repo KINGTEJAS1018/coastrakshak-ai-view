@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Waves, Shield, Brain, Users, MapPin, Activity, ChevronRight, Play, Quote } from "lucide-react";
 import { Link } from "react-router-dom";
 import ChatbotWidget from "@/components/Chatbot/ChatbotWidget";
+
 const Index = () => {
   const [activeDemo, setActiveDemo] = useState(0);
   const features = [{
@@ -56,6 +57,7 @@ const Index = () => {
     }, 5000);
     return () => clearInterval(interval);
   });
+
   return <div className="min-h-screen">
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-md border-b border-gray-200 z-50">
@@ -78,7 +80,7 @@ const Index = () => {
                   </Button>
                 </Link>
                 <Link to="/admin-login">
-                  <Button className="bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600">
+                  <Button className="bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white shadow-lg">
                     Admin Login
                   </Button>
                 </Link>
@@ -130,7 +132,7 @@ const Index = () => {
                   <ChevronRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="border-white/30 hover:bg-white/10 backdrop-blur-sm px-8 py-3 text-slate-300">
+              <Button size="lg" className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border-2 border-white/50 text-white px-8 py-3 shadow-lg">
                 <Play className="mr-2 h-5 w-5" />
                 Watch Demo
               </Button>
@@ -149,7 +151,7 @@ const Index = () => {
 
       {/* Features Section with Ocean Background */}
       <section id="features" className="py-16 px-4 sm:px-6 lg:px-8 relative bg-cover bg-center bg-no-repeat" style={{
-      backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9)), url('https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?auto=format&fit=crop&w=2070&q=80')`
+      backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.85)), url('https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?auto=format&fit=crop&w=2070&q=80')`
     }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -175,8 +177,10 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-teal-500">
+      {/* CTA Section with Beach Background */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 relative bg-cover bg-center bg-no-repeat" style={{
+      backgroundImage: `linear-gradient(rgba(59, 130, 246, 0.8), rgba(20, 184, 166, 0.8)), url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=2070&q=80')`
+    }}>
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Ready to Protect Your Coastline?
@@ -186,12 +190,12 @@ const Index = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/login">
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3">
+              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 shadow-lg">
                 Get Started Now
               </Button>
             </Link>
             <Link to="/admin-login">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-3">
+              <Button size="lg" className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border-2 border-white/50 text-white px-8 py-3 shadow-lg">
                 Admin Access
               </Button>
             </Link>
@@ -199,15 +203,17 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+      {/* Footer with Beach Background */}
+      <footer className="text-white py-12 px-4 sm:px-6 lg:px-8 relative bg-cover bg-center bg-no-repeat" style={{
+      backgroundImage: `linear-gradient(rgba(17, 24, 39, 0.9), rgba(17, 24, 39, 0.95)), url('https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?auto=format&fit=crop&w=2070&q=80')`
+    }}>
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Waves className="h-8 w-8 text-blue-400" />
               <span className="text-2xl font-bold">Coastrakshak.AI</span>
             </div>
-            <div className="text-gray-400">
+            <div className="text-gray-300">
               © 2024 Coastrakshak.AI. Protecting coastlines with intelligence.
             </div>
           </div>
@@ -218,4 +224,5 @@ const Index = () => {
       <ChatbotWidget />
     </div>;
 };
+
 export default Index;
