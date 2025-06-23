@@ -5,67 +5,58 @@ import { Badge } from "@/components/ui/badge";
 import { Waves, Shield, Brain, Users, MapPin, Activity, ChevronRight, Play, Quote } from "lucide-react";
 import { Link } from "react-router-dom";
 import ChatbotWidget from "@/components/Chatbot/ChatbotWidget";
-
 const Index = () => {
   const [activeDemo, setActiveDemo] = useState(0);
-
-  const features = [
-    {
-      icon: Brain,
-      title: "AI-Powered Analysis",
-      description: "Advanced machine learning algorithms analyze coastal patterns and predict changes"
-    },
-    {
-      icon: Waves,
-      title: "Real-time Monitoring",
-      description: "24/7 surveillance of coastal conditions with instant alerts and notifications"
-    },
-    {
-      icon: Shield,
-      title: "Threat Detection",
-      description: "Early warning system for erosion, flooding, and environmental hazards"
-    },
-    {
-      icon: MapPin,
-      title: "Geospatial Mapping",
-      description: "Interactive maps with satellite imagery and coastal zone visualization"
-    }
-  ];
-
-  const stats = [
-    { value: "500+", label: "Coastlines Monitored" },
-    { value: "99.8%", label: "Accuracy Rate" },
-    { value: "24/7", label: "Real-time Monitoring" },
-    { value: "50+", label: "Partner Organizations" }
-  ];
-
-  const quotes = [
-    {
-      text: "The sea, once it casts its spell, holds one in its net of wonder forever.",
-      author: "Jacques Cousteau"
-    },
-    {
-      text: "We know more about the movement of celestial bodies than about the soil underfoot.",
-      author: "Leonardo da Vinci"
-    },
-    {
-      text: "The ocean stirs the heart, inspires the imagination and brings eternal joy to the soul.",
-      author: "Robert Wyland"
-    }
-  ];
-
+  const features = [{
+    icon: Brain,
+    title: "AI-Powered Analysis",
+    description: "Advanced machine learning algorithms analyze coastal patterns and predict changes"
+  }, {
+    icon: Waves,
+    title: "Real-time Monitoring",
+    description: "24/7 surveillance of coastal conditions with instant alerts and notifications"
+  }, {
+    icon: Shield,
+    title: "Threat Detection",
+    description: "Early warning system for erosion, flooding, and environmental hazards"
+  }, {
+    icon: MapPin,
+    title: "Geospatial Mapping",
+    description: "Interactive maps with satellite imagery and coastal zone visualization"
+  }];
+  const stats = [{
+    value: "500+",
+    label: "Coastlines Monitored"
+  }, {
+    value: "99.8%",
+    label: "Accuracy Rate"
+  }, {
+    value: "24/7",
+    label: "Real-time Monitoring"
+  }, {
+    value: "50+",
+    label: "Partner Organizations"
+  }];
+  const quotes = [{
+    text: "The sea, once it casts its spell, holds one in its net of wonder forever.",
+    author: "Jacques Cousteau"
+  }, {
+    text: "We know more about the movement of celestial bodies than about the soil underfoot.",
+    author: "Leonardo da Vinci"
+  }, {
+    text: "The ocean stirs the heart, inspires the imagination and brings eternal joy to the soul.",
+    author: "Robert Wyland"
+  }];
   const [currentQuote, setCurrentQuote] = useState(0);
 
   // Auto-rotate quotes every 5 seconds
   useState(() => {
     const interval = setInterval(() => {
-      setCurrentQuote((prev) => (prev + 1) % quotes.length);
+      setCurrentQuote(prev => (prev + 1) % quotes.length);
     }, 5000);
     return () => clearInterval(interval);
   });
-
-  return (
-    <div className="min-h-screen">
+  return <div className="min-h-screen">
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-md border-b border-gray-200 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -98,12 +89,9 @@ const Index = () => {
       </nav>
 
       {/* Hero Section with Beach Background */}
-      <section 
-        className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 relative min-h-screen bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.3)), url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=2070&q=80')`
-        }}
-      >
+      <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 relative min-h-screen bg-cover bg-center bg-no-repeat" style={{
+      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.3)), url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=2070&q=80')`
+    }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <Badge variant="secondary" className="mb-4 bg-white/20 text-white border-white/30 backdrop-blur-sm">
@@ -142,7 +130,7 @@ const Index = () => {
                   <ChevronRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 backdrop-blur-sm px-8 py-3">
+              <Button size="lg" variant="outline" className="border-white/30 hover:bg-white/10 backdrop-blur-sm px-8 py-3 text-slate-300">
                 <Play className="mr-2 h-5 w-5" />
                 Watch Demo
               </Button>
@@ -151,24 +139,18 @@ const Index = () => {
 
           {/* Stats with improved visibility */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center bg-white/10 backdrop-blur-md rounded-lg p-6 border border-white/20">
+            {stats.map((stat, index) => <div key={index} className="text-center bg-white/10 backdrop-blur-md rounded-lg p-6 border border-white/20">
                 <div className="text-3xl md:text-4xl font-bold text-white mb-2 drop-shadow-lg">{stat.value}</div>
                 <div className="text-white/80">{stat.label}</div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
 
       {/* Features Section with Ocean Background */}
-      <section 
-        id="features" 
-        className="py-16 px-4 sm:px-6 lg:px-8 relative bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9)), url('https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?auto=format&fit=crop&w=2070&q=80')`
-        }}
-      >
+      <section id="features" className="py-16 px-4 sm:px-6 lg:px-8 relative bg-cover bg-center bg-no-repeat" style={{
+      backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9)), url('https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?auto=format&fit=crop&w=2070&q=80')`
+    }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -180,8 +162,7 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white/80 backdrop-blur-sm">
+            {features.map((feature, index) => <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white/80 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-teal-500 rounded-lg flex items-center justify-center mb-4">
                     <feature.icon className="h-6 w-6 text-white" />
@@ -189,8 +170,7 @@ const Index = () => {
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
                   <p className="text-gray-600">{feature.description}</p>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -236,8 +216,6 @@ const Index = () => {
 
       {/* Chatbot Widget */}
       <ChatbotWidget />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
